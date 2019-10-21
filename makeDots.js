@@ -3,6 +3,7 @@ var height=10;
 var radius = 3;
 var boxes = [];
 const colors = ["blue", "red"]
+var scores = [0,0];
 var player = 0;
 
 var canvas = document.getElementById("playCanvas");
@@ -21,6 +22,12 @@ document.getElementById("startButton").onclick = function(){
 	for(e of document.getElementsByClassName("intro")){
 		e.style.display="none";
 	}
+	
+	for(e of document.getElementsByClassName("playing")){
+		e.style.display = "block";
+	}
+	
+	updateScores();
 	drawDots(width,height);
 	boxes = [...Array(width-1)].map(e => Array(height-1));
 	makeBoxes(width, height);
@@ -53,6 +60,16 @@ function makeBoxes(width, height){
 			box.top=false;
 			box.bottom=false;
 			box.value = 1;
+			
+			newVal = Math.random();
+			if(newVal<0.1){
+				box.value = -1;
+				ctx.fillText("-1", (i+1.5)*(horizontal_space+2*radius)-2*radius, (j+1.5)*(vertical_space+2*radius))
+			}else if(newVal>0.9){
+				box.value = 2;
+				ctx.fillText("2", (i+1.5)*(horizontal_space+2*radius)-2*radius, (j+1.5)*(vertical_space+2*radius))
+			}
+			
 			boxes[i][j]=box;
 		}
 	}
@@ -61,6 +78,8 @@ function makeBoxes(width, height){
 
 document.addEventListener("click", makeLine);
 
+
+
 function makeLine(){
 
 	const rect = canvas.getBoundingClientRect();
@@ -68,40 +87,42 @@ function makeLine(){
 	xpos = event.clientX-rect.left;
 	ypos = event.clientY-rect.top;
 	
-	
-	var line_x = horizontal_space+radius;
-	var i=0;
-	var j=0;
-	
-	while(line_x-xpos<-horizontal_space){
-		line_x = line_x+horizontal_space+2*radius;
-		i=i+1;
-	}
-	
-	var line_y = vertical_space+radius;
-	while(line_y-ypos<-vertical_space){
-		line_y = line_y+vertical_space+2*radius;
-		j=j+1;
-	}
-	
-	
-	var left_dist = xpos - line_x;
-	var right_dist = line_x+horizontal_space+2*radius - xpos;
-	var top_dist = ypos - line_y;
-	var bottom_dist = line_y+vertical_space+2*radius - ypos;
-	
-	var smallest = Math.min(left_dist, right_dist, top_dist, bottom_dist);
-	
-	if(smallest == left_dist){
-		makeVertical(i, j);
-	}else if(smallest == right_dist){
-		makeVertical(i+1, j)
-	}else if(smallest == top_dist){
-		makeHorizontal(i, j);
-	}else{
-		makeHorizontal(i, j+1);
-	}
+	if(ypos>0){
 		
+		var line_x = horizontal_space+radius;
+		var i=0;
+		var j=0;
+
+		while(line_x-xpos<-horizontal_space){
+			line_x = line_x+horizontal_space+2*radius;
+			i=i+1;
+		}
+
+		var line_y = vertical_space+radius;
+		while(line_y-ypos<-vertical_space){
+			line_y = line_y+vertical_space+2*radius;
+			j=j+1;
+		}
+
+
+		var left_dist = xpos - line_x;
+		var right_dist = line_x+horizontal_space+2*radius - xpos;
+		var top_dist = ypos - line_y;
+		var bottom_dist = line_y+vertical_space+2*radius - ypos;
+
+		var smallest = Math.min(left_dist, right_dist, top_dist, bottom_dist);
+
+		if(smallest == left_dist){
+			makeVertical(i, j);
+		}else if(smallest == right_dist){
+			makeVertical(i+1, j)
+		}else if(smallest == top_dist){
+			makeHorizontal(i, j);
+		}else{
+			makeHorizontal(i, j+1);
+		}
+	}
+
 }
 
 
@@ -126,6 +147,8 @@ function makeHorizontal(i, j){
 			changeBottom(i,j-1);			
 		}
 		player = (player+1)%2;
+		document.getElementById("turn").innerText = "It is "+colors[player]+"'s turn."
+		
 	}
 }
 
@@ -152,6 +175,7 @@ function makeVertical(i, j){
 		}
 		
 		player = (player+1)%2;
+		document.getElementById("turn").innerText = "It is "+colors[player]+"'s turn."
 	}
 	
 }
@@ -182,7 +206,15 @@ function checkBox(i,j){
 		ctx.save();
 		ctx.translate((i+1)*(horizontal_space+2*radius)-radius, (j+1)*(vertical_space+2*radius)-radius);
 		ctx.fillStyle = colors[player];
+		scores[player]+=box.value;
+		updateScores();
 		ctx.fillRect(0,0,horizontal_space+2*radius, vertical_space+2*radius);
 		ctx.restore();
 	}
+}
+
+
+function updateScores(){
+	document.getElementById("player_1_score").innerText = scores[1];
+	document.getElementById("player_0_score").innerText = scores[0];
 }

@@ -18,8 +18,19 @@
 <button type="button" class = "intro" id="startButton">Begin!</button>
 
 
+<div class="playing" style="display:none; position:absolute; left:60; top:300">
+	<span id="turn">It is blue's turn</span>
+	<br>
+	<span id="player_1_score_text" style="position:absolute; left:0;top:20">Red Score:</span>
+	<span id="player_1_score" style="position:absolute; left: 80;top:20"></span>
+	<br>
+	<span id="player_0_score_text" style="position:absolute; left:0;top:40">Blue Score:</span>
+	<span id="player_0_score" style="position:absolute; left: 80;top:40"></span>
+	
+</div>
+
 <div>
-<canvas id="playCanvas" width="400" height="400" style="position: absolute; left: 300; top: 150; z-index: 0;"></canvas>
+<canvas id="playCanvas" width="400" height="400" style="position: absolute; left: 300; top: 200; z-index: 0;"></canvas>
 
 
 </center>
