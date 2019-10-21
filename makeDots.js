@@ -22,7 +22,7 @@ document.getElementById("startButton").onclick = function(){
 		e.style.display="none";
 	}
 	drawDots(width,height);
-	boxes = [...Array(width)].map(e => Array(height));
+	boxes = [...Array(width-1)].map(e => Array(height-1));
 	makeBoxes(width, height);
 }
 
@@ -92,7 +92,6 @@ function makeLine(){
 	
 	var smallest = Math.min(left_dist, right_dist, top_dist, bottom_dist);
 	
-	
 	if(smallest == left_dist){
 		makeVertical(i, j);
 	}else if(smallest == right_dist){
@@ -107,14 +106,22 @@ function makeLine(){
 
 
 function makeHorizontal(i, j){
+	var test = false;
+	if(j!=height-1){
+		test = boxes[i][j].top;
+	}else{
+		test = boxes[i][j-1].bottom;
+	}
 
-	if(!boxes[i][j].top){
+	if(!test){
 		ctx.beginPath();
 		ctx.moveTo((i+1)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
 		ctx.lineTo((i+2)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
 		ctx.stroke();
 
-		changeTop(i,j);
+		if(j!=height-1){
+			changeTop(i,j);			
+		}
 		if(j!=0){
 			changeBottom(i,j-1);			
 		}
@@ -125,15 +132,21 @@ function makeHorizontal(i, j){
 
 
 function makeVertical(i, j){
-	
-	if(!boxes[i][j].left){
-		
+	var test = false;
+	if(i!=width-1){
+		test = boxes[i][j].left;
+	}else{
+		test = boxes[i-1][j].right
+	}
+	if(!test){
 		ctx.beginPath();
 		ctx.moveTo((i+1)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
 		ctx.lineTo((i+1)*(horizontal_space+2*radius)-radius,(j+2)*(vertical_space+2*radius)-radius);
 		ctx.stroke();
 
-		changeLeft(i,j);
+		if(i!=width-1){
+			changeLeft(i,j);
+		}
 		if(i!=0){
 			changeRight(i-1,j);
 		}
