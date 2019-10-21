@@ -2,10 +2,22 @@ var width=10;
 var height=10;
 var radius = 3;
 var boxes = [];
+const colors = ["blue", "red"]
+var player = 0;
+
+var canvas = document.getElementById("playCanvas");
+var ctx = canvas.getContext("2d");
+var horizontal_space = (canvas.width - 6*width)/(width+1);
+var vertical_space = (canvas.height-6*height)/(height+1);
+
 
 document.getElementById("startButton").onclick = function(){
 	width = parseInt(document.getElementById("width").value);
 	height = parseInt(document.getElementById("height").value);
+	
+	horizontal_space = (canvas.width - 6*width)/(width+1);
+	vertical_space = (canvas.height-6*height)/(height+1);
+	
 	for(e of document.getElementsByClassName("intro")){
 		e.style.display="none";
 	}
@@ -15,10 +27,7 @@ document.getElementById("startButton").onclick = function(){
 }
 
 function drawDots(width, height){
-	var canvas = document.getElementById("playCanvas")
-	var ctx = canvas.getContext("2d");
-	var horizontal_space = (canvas.width - 2*radius*width)/(width+1)
-	var vertical_space = (canvas.height-2*radius*height)/(height+1)
+
 	for(var i=0;i<width;i++){
 		for(var j=0;j<height;j++){
 			var circle = {};
@@ -53,11 +62,7 @@ function makeBoxes(width, height){
 document.addEventListener("click", makeLine);
 
 function makeLine(){
-	
-	var canvas = document.getElementById("playCanvas")
-	var ctx = canvas.getContext("2d");
-	var horizontal_space = (canvas.width - 6*width)/(width+1)
-	var vertical_space = (canvas.height-6*height)/(height+1)
+
 	const rect = canvas.getBoundingClientRect();
 	
 	xpos = event.clientX-rect.left;
@@ -102,35 +107,40 @@ function makeLine(){
 
 
 function makeHorizontal(i, j){
-	var canvas = document.getElementById("playCanvas")
-	var ctx = canvas.getContext("2d");
-	var horizontal_space = (canvas.width - 6*width)/(width+1)
-	var vertical_space = (canvas.height-6*height)/(height+1)
-	
-	ctx.beginPath();
-	ctx.moveTo((i+1)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
-	ctx.lineTo((i+2)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
-	ctx.stroke();
-	
-	changeTop(i,j);
-	changeBottom(i,j-1);
+
+	if(!boxes[i][j].top){
+		ctx.beginPath();
+		ctx.moveTo((i+1)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
+		ctx.lineTo((i+2)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
+		ctx.stroke();
+
+		changeTop(i,j);
+		if(j!=0){
+			changeBottom(i,j-1);			
+		}
+		player = (player+1)%2;
+	}
 }
 
 
 
 function makeVertical(i, j){
-	var canvas = document.getElementById("playCanvas")
-	var ctx = canvas.getContext("2d");
-	var horizontal_space = (canvas.width - 6*width)/(width+1)
-	var vertical_space = (canvas.height-6*height)/(height+1)
 	
-	ctx.beginPath();
-	ctx.moveTo((i+1)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
-	ctx.lineTo((i+1)*(horizontal_space+2*radius)-radius,(j+2)*(vertical_space+2*radius)-radius);
-	ctx.stroke();
+	if(!boxes[i][j].left){
+		
+		ctx.beginPath();
+		ctx.moveTo((i+1)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
+		ctx.lineTo((i+1)*(horizontal_space+2*radius)-radius,(j+2)*(vertical_space+2*radius)-radius);
+		ctx.stroke();
+
+		changeLeft(i,j);
+		if(i!=0){
+			changeRight(i-1,j);
+		}
+		
+		player = (player+1)%2;
+	}
 	
-	changeLeft(i,j);
-	changeRight(i-1,j);
 }
 
 function changeTop(i,j){
@@ -155,15 +165,10 @@ function changeRight(i,j){
 
 function checkBox(i,j){
 	box=boxes[i][j];
-	if(box.left & box.right & box.top & box.bottom){
-		var canvas = document.getElementById("playCanvas")
-		var ctx = canvas.getContext("2d");
-		var horizontal_space = (canvas.width - 6*width)/(width+1)
-		var vertical_space = (canvas.height-6*height)/(height+1)
-		
+	if(box.left & box.right & box.top & box.bottom){		
 		ctx.save();
 		ctx.translate((i+1)*(horizontal_space+2*radius)-radius, (j+1)*(vertical_space+2*radius)-radius);
-		ctx.fillStyle = "blue";
+		ctx.fillStyle = colors[player];
 		ctx.fillRect(0,0,horizontal_space+2*radius, vertical_space+2*radius);
 		ctx.restore();
 	}
