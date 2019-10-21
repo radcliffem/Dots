@@ -1,0 +1,30 @@
+<html>
+<head>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas {display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<center>
+<div class="intro">Welcome! Ready to play?<br><br></div>
+<p class="intro">Please enter the desired size of your game.</p>
+<div class="intro"><br>Width: <input type="text" class="intro" id="width" value="10"></input>
+<br>Height: <input type="text" class="intro" id="height" value="10"></input>
+<br></div>
+<br>
+
+<button type="button" class = "intro" id="startButton">Begin!</button>
+
+
+<div>
+<canvas id="playCanvas" width="400" height="400" style="position: absolute; left: 300; top: 150; z-index: 0;"></canvas>
+
+
+</center>
+
+<script src="makeDots.js"></script>
+
+</body>
+</html>
