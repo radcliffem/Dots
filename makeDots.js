@@ -5,12 +5,40 @@ var boxes = [];
 const colors = ["blue", "red"]
 var scores = [0,0];
 var player = 0;
+var classic=false;
+var strategy=true;
+
+
 
 var canvas = document.getElementById("playCanvas");
 var ctx = canvas.getContext("2d");
 var horizontal_space = (canvas.width - 6*width)/(width+1);
 var vertical_space = (canvas.height-6*height)/(height+1);
 
+document.getElementById("classic_button").onclick=function(){
+	initialize(true, false);
+}
+
+document.getElementById("classic_strategy_button").onclick=function(){
+	initialize(true, true);
+}
+
+
+document.getElementById("strategy_button").onclick=function(){
+	initialize(false, true);
+}
+
+
+function initialize(c, s){
+	classic=c;
+	strategy=s;
+	for(e of document.getElementsByClassName("intro")){
+		e.style.display="none";
+	}
+	for(e of document.getElementsByClassName("size")){
+		e.style.display="block"
+	}
+}
 
 document.getElementById("startButton").onclick = function(){
 	width = parseInt(document.getElementById("width").value);
@@ -19,7 +47,7 @@ document.getElementById("startButton").onclick = function(){
 	horizontal_space = (canvas.width - 6*width)/(width+1);
 	vertical_space = (canvas.height-6*height)/(height+1);
 	
-	for(e of document.getElementsByClassName("intro")){
+	for(e of document.getElementsByClassName("size")){
 		e.style.display="none";
 	}
 	
@@ -61,16 +89,19 @@ function makeBoxes(width, height){
 			box.bottom=false;
 			box.value = 1;
 			
-			newVal = Math.random();
-			if(newVal<0.1){
-				box.value = -1;
-				ctx.fillText("-1", (i+1.5)*(horizontal_space+2*radius)-2*radius, (j+1.5)*(vertical_space+2*radius))
-			}else if(newVal>0.9){
-				box.value = 2;
-				ctx.fillText("2", (i+1.5)*(horizontal_space+2*radius)-2*radius, (j+1.5)*(vertical_space+2*radius))
+			if(strategy){
+				newVal = Math.random();
+				if(newVal<0.1){
+					box.value = -1;
+					ctx.fillText("-1", (i+1.5)*(horizontal_space+2*radius)-2*radius, (j+1.5)*(vertical_space+2*radius))
+				}else if(newVal>0.9){
+					box.value = 2;
+					ctx.fillText("2", (i+1.5)*(horizontal_space+2*radius)-2*radius, (j+1.5)*(vertical_space+2*radius))
+				}
 			}
-			
-			boxes[i][j]=box;
+		
+		boxes[i][j]=box;
+		
 		}
 	}
 }
@@ -139,14 +170,22 @@ function makeHorizontal(i, j){
 		ctx.moveTo((i+1)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
 		ctx.lineTo((i+2)*(horizontal_space+2*radius)-radius,(j+1)*(vertical_space+2*radius)-radius);
 		ctx.stroke();
-
+		
+		var changeTurn = true;
+		
 		if(j!=height-1){
-			changeTop(i,j);			
+			if(!changeTop(i,j)){
+				changeTurn=false;
+			};
 		}
 		if(j!=0){
-			changeBottom(i,j-1);			
+			if(!changeBottom(i,j-1)){
+				changeTurn=false;
+			}			
 		}
-		player = (player+1)%2;
+		if(changeTurn){
+			player = (player+1)%2;
+		}
 		document.getElementById("turn").innerText = "It is "+colors[player]+"'s turn."
 		
 	}
@@ -167,14 +206,21 @@ function makeVertical(i, j){
 		ctx.lineTo((i+1)*(horizontal_space+2*radius)-radius,(j+2)*(vertical_space+2*radius)-radius);
 		ctx.stroke();
 
+		var changeTurn=true;
+
 		if(i!=width-1){
-			changeLeft(i,j);
+			if(!changeLeft(i,j)){
+				changeTurn=false;
+			}
 		}
 		if(i!=0){
-			changeRight(i-1,j);
+			if(!changeRight(i-1,j)){
+				changeTurn=false;
+			}
 		}
-		
-		player = (player+1)%2;
+		if(changeTurn){
+			player = (player+1)%2;
+		}
 		document.getElementById("turn").innerText = "It is "+colors[player]+"'s turn."
 	}
 	
@@ -182,22 +228,22 @@ function makeVertical(i, j){
 
 function changeTop(i,j){
 	boxes[i][j].top = true;
-	checkBox(i,j);
+	return checkBox(i,j);
 }
 
 function changeBottom(i,j){
 	boxes[i][j].bottom =true;
-	checkBox(i,j);
+	return checkBox(i,j);
 }
 
 function changeLeft(i,j){
 	boxes[i][j].left=true;
-	checkBox(i,j);
+	return checkBox(i,j);
 }
 
 function changeRight(i,j){
 	boxes[i][j].right=true;
-	checkBox(i,j);
+	return checkBox(i,j);
 }
 
 function checkBox(i,j){
@@ -210,7 +256,11 @@ function checkBox(i,j){
 		updateScores();
 		ctx.fillRect(0,0,horizontal_space+2*radius, vertical_space+2*radius);
 		ctx.restore();
+		if(classic){
+			return false;
+		}
 	}
+	return true;
 }
 
 

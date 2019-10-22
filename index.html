@@ -9,13 +9,20 @@
 
 <center>
 <div class="intro">Welcome! Ready to play?<br><br></div>
-<p class="intro">Please enter the desired size of your game.</p>
-<div class="intro"><br>Width: <input type="text" class="intro" id="width" value="10"></input>
-<br>Height: <input type="text" class="intro" id="height" value="10"></input>
+
+<p class = "intro"> Please select a game mode.</p>
+<br>
+<button type="button" class="intro" id="classic_button">Classic</button> 
+<button type="button" class="intro" id="strategy_button">Strategy</button>
+<button type="button" class="intro" id="classic_strategy_button">Strategy-Classic</button>
+
+<p class="size" style="display:none">Please enter the desired size of your game.</p>
+<div class="size" style="display:none"><br>Width: <input type="text" class="size" id="width" value="10"></input>
+<br>Height: <input type="text" class="size" id="height" value="10"></input>
 <br></div>
 <br>
 
-<button type="button" class = "intro" id="startButton">Begin!</button>
+<button type="button" class = "size" id="startButton" style="display:none">Begin!</button>
 
 
 <div class="playing" style="display:none; position:absolute; left:60; top:300">
@@ -31,6 +38,7 @@
 
 <div>
 <canvas id="playCanvas" width="400" height="400" style="position: absolute; left: 300; top: 200; z-index: 0;"></canvas>
+
 
 </center>
 
